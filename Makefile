@@ -1,14 +1,14 @@
 BINARIES = qtienc qtidec qtvenc qtvdec qtvplay qtvcap
 CC = gcc
 LD = gcc
-#CFLAGS = -g -Wall -Wextra -O4 -march=native
-#for ARM CPUs with a FP unit but no integer division
+#for (ARM) CPUs with a FP unit but no integer division
 #SLOW_DIV avoids divisions. Set to:
 #0 (or undefined) for division
 #1 for FPU division
-#2 for analyze
-CFLAGS = -g -Wall -Wextra -O4 -DSLOW_DIV=2 -mhard-float
-LDFLAGS =
+#2 to analyze the maximum divisor
+#3 for profiling
+CFLAGS = -g -Wall -Wextra -O4 -DSLOW_DIV=3 -pg -mhard-float
+LDFLAGS = -pg
 X11FLAGS = -lX11 -lXext -lXfixes
 SDLFLAGS = -lSDL
 

@@ -44,6 +44,11 @@ static unsigned int DIV(unsigned int x, unsigned int y) {
 	return x / y;
 }
 
+#elif SLOW_DIV==3
+static unsigned int __attribute__((noinline)) DIV(unsigned int x, unsigned int y) {
+	return x / y;
+}
+
 #else
 #  define DIV(x,y) ((x)/(y))
 #endif
@@ -274,7 +279,7 @@ int rangecode_decompress( struct rangecoder *coder, struct databuffer *in, struc
 	{
 		total = totals[idx>>bits];
 
-		value = DIV(code - low,DIV(range,total));
+		value = (code - low)/DIV(range,total);
 
 		i = 0;
 		while( ( value >= 0 ) && ( i < symbols ) )
