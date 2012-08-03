@@ -410,6 +410,10 @@ int main( int argc, char *argv[] )
 
 	SDL_Quit();
 
+#if SLOW_DIV=ANALYZE
+	printf("Maximal divisor: %u\n",maxdivisor);
+#endif
+
 	return 0;
 }
 

@@ -41,5 +41,9 @@ extern void rangecoder_free( struct rangecoder *coder );
 extern int rangecode_compress( struct rangecoder *coder, struct databuffer *in, struct databuffer *out );
 extern int rangecode_decompress( struct rangecoder *coder, struct databuffer *in, struct databuffer *out, unsigned int length );
 
+#if SLOW_DIV=ANALYZE
+extern unsigned int maxdivisor;
+#endif
+
 #endif
 

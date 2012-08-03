@@ -32,8 +32,18 @@
 /* implement division with floating point instructions on architectures that
  * don't have an integer division instruction (such as ARMv6).  */
 
-#ifdef SLOW_DIV
+#if SLOW_DIV=FPU
 #  define DIV(x,y) (typeof(x))((double)(x) / (double)(y))
+#elif SLOW_DIV=ANALYZE
+
+unsigned int maxdivisor = 0;
+
+static unsigned int DIV(unsigned int x, unsigned int y) {
+	if (y > maxdivisor) maxidivisor = y;
+
+	return x / y;
+}
+
 #else
 #  define DIV(x,y) ((x)/(y))
 #endif
