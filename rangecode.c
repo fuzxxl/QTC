@@ -32,14 +32,14 @@
 /* implement division with floating point instructions on architectures that
  * don't have an integer division instruction (such as ARMv6).  */
 
-#if SLOW_DIV=FPU
+#if SLOW_DIV==1
 #  define DIV(x,y) (typeof(x))((double)(x) / (double)(y))
-#elif SLOW_DIV=ANALYZE
+#elif SLOW_DIV==2
 
 unsigned int maxdivisor = 0;
 
 static unsigned int DIV(unsigned int x, unsigned int y) {
-	if (y > maxdivisor) maxidivisor = y;
+	if (y > maxdivisor) maxdivisor = y;
 
 	return x / y;
 }

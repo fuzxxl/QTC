@@ -1,9 +1,13 @@
 BINARIES = qtienc qtidec qtvenc qtvdec qtvplay qtvcap
 CC = gcc
 LD = gcc
-CFLAGS = -g -Wall -Wextra -O4 -march=native
+#CFLAGS = -g -Wall -Wextra -O4 -march=native
 #for ARM CPUs with a FP unit but no integer division
-#CFLAGS = -g -Wall -Wextra -O4 -DSLOW_DIV -mhard-float
+#SLOW_DIV avoids divisions. Set to:
+#0 (or undefined) for division
+#1 for FPU division
+#2 for analyze
+CFLAGS = -g -Wall -Wextra -O4 -DSLOW_DIV=2 -mhard-float
 LDFLAGS =
 X11FLAGS = -lX11 -lXext -lXfixes
 SDLFLAGS = -lSDL

@@ -32,6 +32,7 @@
 #include "qtc.h"
 #include "qtv.h"
 #include "ppm.h"
+#include "rangecode.h"
 
 /*******************************************************************************
 * This is a simple qtv player using SDL.                                       *
@@ -410,7 +411,7 @@ int main( int argc, char *argv[] )
 
 	SDL_Quit();
 
-#if SLOW_DIV=ANALYZE
+#if SLOW_DIV==2
 	printf("Maximal divisor: %u\n",maxdivisor);
 #endif
 
