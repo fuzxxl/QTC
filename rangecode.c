@@ -279,7 +279,9 @@ int rangecode_decompress( struct rangecoder *coder, struct databuffer *in, struc
 	{
 		total = totals[idx>>bits];
 
-		value = (code - low)/DIV(range,total);
+		range = DIV(range,total);
+
+		value = (code - low) / range;
 
 		i = 0;
 		while( ( value >= 0 ) && ( i < symbols ) )
@@ -307,7 +309,6 @@ int rangecode_decompress( struct rangecoder *coder, struct databuffer *in, struc
 
 		size = freqs[idx+symbol];
 
-		range = DIV(range,total);
 		low += start * range;
 		range *= size;
 
