@@ -292,8 +292,8 @@ void image_transform( struct image *image )
 			berr = abs(qx) + abs(qy) + abs(qz);
 			cerr = abs(px + qx) + abs(py + qy) + abs(pz + qz);
 
-			if (berr < aerr) aerr = berr, a = b;
-			if (cerr < aerr) a = c;
+			if (berr <= aerr) aerr = berr, a = b;
+			if (cerr <= aerr) a = c;
 
 			pixels[ i ].x -= a.x;
 			pixels[ i ].y -= a.y;
@@ -385,8 +385,8 @@ void image_transform_rev( struct image *image )
 			berr = abs(qx) + abs(qy) + abs(qz);
 			cerr = abs(px + qx) + abs(py + qy) + abs(pz + qz);
 
-			if (berr < aerr) aerr = berr, a = b;
-			if (cerr < aerr) a = c;
+			if (berr <= aerr) aerr = berr, a = b;
+			if (cerr <= aerr) a = c;
 
 			pixels[ i ].x += a.x;
 			pixels[ i ].y += a.y;
