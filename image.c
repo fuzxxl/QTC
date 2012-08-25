@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <immintrin.h>
 
 #include "image.h"
 
@@ -331,9 +332,9 @@ void image_transform( struct image *image )
 void image_transform_rev( struct image *image )
 {
 	int x, y, i, width, height, aerr, berr, cerr, ia, ib, ic;
-	struct pixel p, a, b, c;
+	struct pixel pp;
+	__m128i a, b, c, p, q, r, a_, b_, c_;
 	struct pixel *pixels;
-	int px, py, pz, qx, qy, qz;
 
 	image->transform = 0;
 
@@ -345,22 +346,22 @@ void image_transform_rev( struct image *image )
 	{
 		i = x;
 
-		p = pixels[ i-1 ];
+		pp = pixels[ i-1 ];
 
-		pixels[ i ].x += p.x;
-		pixels[ i ].y += p.y;
-		pixels[ i ].z += p.z;
+		pixels[ i ].x += pp.x;
+		pixels[ i ].y += pp.y;
+		pixels[ i ].z += pp.z;
 	}
 
 	for( y=1; y<height; y++ )
 	{
 		i = y*width;
 
-		p = pixels[ i-width ];
+		pp = pixels[ i-width ];
 		
-		pixels[ i ].x += p.x;
-		pixels[ i ].y += p.y;
-		pixels[ i ].z += p.z;
+		pixels[ i ].x += pp.x;
+		pixels[ i ].y += pp.y;
+		pixels[ i ].z += pp.z;
 		
 		for( x=1; x<width; x++ )
 		{
@@ -369,28 +370,41 @@ void image_transform_rev( struct image *image )
 			ib = i-width;
 			ic = i-1-width;
 
-			a = pixels[ ia ];
-			b = pixels[ ib ];
-			c = pixels[ ic ];
+			a = _mm_loadl_epi64( (void*) &pixels[ia] );
+			b = _mm_loadl_epi64( (void*) &pixels[ib] );
+			c = _mm_loadl_epi64( (void*) &pixels[ic] );
 
-			px = b.x - c.x;
-			py = b.y - c.y;
-			pz = b.z - c.z;
+			a_ = _mm_cvtepu8_epi32(a);
+			b_ = _mm_cvtepu8_epi32(b);
+			c_ = _mm_cvtepu8_epi32(c);
 
-			qx = a.x - c.x;
-			qy = a.y - c.y;
-			qz = a.z - c.z;
+			p = _mm_sub_epi32(b_,c_);
+			q = _mm_sub_epi32(a_,c_);
+			r = _mm_add_epi32(p,q);
 
-			aerr = abs(px) + abs(py) + abs(pz);
-			berr = abs(qx) + abs(qy) + abs(qz);
-			cerr = abs(px + qx) + abs(py + qy) + abs(pz + qz);
+			p = _mm_abs_epi32(p);
+			q = _mm_abs_epi32(q);
+			r = _mm_abs_epi32(r);
+
+			p = _mm_hadd_epi32(p,p);
+			p = _mm_hadd_epi32(p,p);
+			q = _mm_hadd_epi32(q,q);
+			q = _mm_hadd_epi32(q,q);
+			r = _mm_hadd_epi32(r,r);
+			r = _mm_hadd_epi32(r,r);
+
+			aerr = _mm_cvtsi128_si32(p);
+			berr = _mm_cvtsi128_si32(q);
+			cerr = _mm_cvtsi128_si32(r);
 
 			if (berr <= aerr) aerr = berr, a = b;
 			if (cerr <= aerr) a = c;
 
-			pixels[ i ].x += a.x;
-			pixels[ i ].y += a.y;
-			pixels[ i ].z += a.z;
+			
+			p = _mm_loadl_epi64( (void*) &pixels[ia] );
+			p = _mm_add_epi8(p,a);
+
+			((int*)pixels)[i] = _mm_cvtsi128_si32(p);
 		}
 	}
 }
